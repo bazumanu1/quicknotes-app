@@ -37,6 +37,7 @@ function render() {
 
     const deleteButton = document.createElement("button");
     deleteButton.type = "button";
+    deleteButton.dataset.noteId = note.id;
     deleteButton.classList.add("delete-button");
     deleteButton.textContent = "Delete";
 
@@ -48,16 +49,39 @@ function render() {
     list.appendChild(card);
   });
 
-  count.textContent =
-    notes.length === 1 ? "You have 1 note." : `You have ${notes.length} notes.`;
+  if (notes.length === 0) {
+    count.textContent = "You have no notes yet.";
+  } else if (notes.length === 1) {
+    count.textContent = "You have 1 note.";
+  } else {
+    count.textContent = `You have ${notes.length} notes.`;
+  }
+}
+
+function deleteNote(id) {
+  notes = notes.filter((note) => note.id !== id);
+  render();
 }
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
+  const text = input.value.trim();
+  if (text === "") {
+    errorMessage.textContent = "Please type a note first.";
+    input.focus();
+    return;
+  }
+  if (text.length > 200) {
+    errorMessage.textContent = "Notes must be 200 characters or fewer.";
+    input.focus();
+    return;
+  }
+
+  errorMessage.textContent = "";
   const note = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-    text: input.value.trim(),
+    text,
     category: categoryInput.value,
     createdAt: new Date().toLocaleString([], {
       dateStyle: "medium",
@@ -69,6 +93,19 @@ form.addEventListener("submit", (event) => {
   render();
   input.value = "";
   input.focus();
+});
+
+list.addEventListener("click", (event) => {
+  const deleteButton = event.target.closest(".delete-button");
+  if (!deleteButton) return;
+
+  deleteNote(deleteButton.dataset.noteId);
+});
+
+document.querySelector("#clear-all-btn").addEventListener("click", () => {
+  if (!confirm("Delete all notes?")) return;
+  notes = [];
+  render();
 });
 
 render();
