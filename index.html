@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#176b62">
+  <title>QuickNotes</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <p class="eyebrow">A LITTLE SPACE FOR BIG IDEAS</p>
+      <h1>QuickNotes</h1>
+      <p class="tagline">Catch a thought. Keep your day moving.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel composer" aria-labelledby="add-heading">
+      <div class="panel-heading">
+        <p class="section-index">01 / CAPTURE</p>
+        <h2 id="add-heading">Add a note</h2>
+      </div>
+
+      <form id="note-form">
+        <div class="field note-field">
+          <label for="note-input">What would you like to remember?</label>
+          <input id="note-input" name="note" type="text" autocomplete="off" placeholder="Write a quick note...">
+        </div>
+        <div class="field category-field">
+          <label for="note-category">Category</label>
+          <select id="note-category" name="category">
+            <option value="personal">Personal</option>
+            <option value="work">Work</option>
+            <option value="study">Study</option>
+          </select>
+        </div>
+        <button class="primary-button" type="submit">Add note <span aria-hidden="true">+</span></button>
+      </form>
+      <p id="error-message" role="alert" aria-live="polite"></p>
+    </section>
+
+    <section class="notes-section" aria-labelledby="notes-heading">
+      <div class="notes-topline">
+        <div class="panel-heading">
+          <p class="section-index">02 / KEEP</p>
+          <h2 id="notes-heading">Your notes</h2>
+        </div>
+        <button id="clear-all-btn" class="clear-all-button" type="button">Clear all</button>
+      </div>
+
+      <label class="search-label" for="search-input">Find a note</label>
+      <input id="search-input" class="search-input" type="search" placeholder="Search your notes..." autocomplete="off">
+      <div class="list-heading">
+        <p id="note-count" aria-live="polite">You have no notes yet.</p>
+        <span class="list-marker" aria-hidden="true">LATEST FIRST</span>
+      </div>
+      <ul id="notes-list" aria-label="Your saved notes"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>QuickNotes <span aria-hidden="true">/</span> Make room for the next thought.</p>
+  </footer>
+</body>
+</html>
