@@ -1,23 +1,46 @@
 const form = document.querySelector("#note-form");
 const input = document.querySelector("#note-input");
 const categoryInput = document.querySelector("#note-category");
+const searchInput = document.querySelector("#search-input");
 const list = document.querySelector("#notes-list");
 const count = document.querySelector("#note-count");
 const errorMessage = document.querySelector("#error-message");
 
-let notes = [];
+const STORAGE_KEY = "quicknotes-app-notes";
+
+function loadNotes() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) return [];
+
+  try {
+    const parsed = JSON.parse(saved);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveNotes() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+}
+
+let notes = loadNotes();
 
 function render() {
   list.innerHTML = "";
+  const query = searchInput.value.trim().toLowerCase();
+  const visibleNotes = notes.filter((note) => note.text.toLowerCase().includes(query));
 
-  if (notes.length === 0) {
+  if (visibleNotes.length === 0) {
     const emptyMessage = document.createElement("li");
     emptyMessage.classList.add("empty-message");
-    emptyMessage.textContent = "Nothing here yet. Add a note to get started.";
+    emptyMessage.textContent = query
+      ? "No notes match your search."
+      : "Nothing here yet. Add a note to get started.";
     list.appendChild(emptyMessage);
   }
 
-  notes.slice().reverse().forEach((note) => {
+  visibleNotes.slice().reverse().forEach((note) => {
     const card = document.createElement("li");
     card.classList.add("note-card", `category-${note.category}`);
 
@@ -60,6 +83,7 @@ function render() {
 
 function deleteNote(id) {
   notes = notes.filter((note) => note.id !== id);
+  saveNotes();
   render();
 }
 
@@ -90,6 +114,7 @@ form.addEventListener("submit", (event) => {
   };
 
   notes.push(note);
+  saveNotes();
   render();
   input.value = "";
   input.focus();
@@ -102,9 +127,12 @@ list.addEventListener("click", (event) => {
   deleteNote(deleteButton.dataset.noteId);
 });
 
+searchInput.addEventListener("input", render);
+
 document.querySelector("#clear-all-btn").addEventListener("click", () => {
   if (!confirm("Delete all notes?")) return;
   notes = [];
+  saveNotes();
   render();
 });
 
